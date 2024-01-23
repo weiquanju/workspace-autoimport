@@ -1,8 +1,15 @@
 # Vue 组件库自动引入最佳实践
 
+## 技术要点
+
+- [pnpm workspace][pnpm-workspace]
+- [create vue][create-vue]
+- [vite config][vite-config]
+- [unplugin-vue-components][unplugin-vue-components]
+
 ## 背景
 
-笔者项目基于 monorepo 架构，以组织前端项目和内部公共组件库。monorepo 是使用的[pnpm workspace](https://pnpm.io/zh/pnpm-workspace_yaml)技术，极简配置即可使用，如下。
+笔者项目基于 monorepo 架构，以组织前端项目和内部公共组件库。monorepo 是使用的[pnpm workspace][pnpm-workspace]技术，极简配置即可使用，如下。
 
 monorepo 仓库更目录创建`pnpm-workspace.yaml`
 
@@ -16,11 +23,13 @@ packages:
   - "!**/test/**"
 ```
 
-在了解完了[pnpm workspace](https://pnpm.io/zh/pnpm-workspace_yaml)技术后，笔者现在的问题是，在`app/management`目录下的应用页面中，需要引入`packages/components`目录里的组件`button.vue`。
+在了解完了[pnpm workspace][pnpm-workspace]技术后，现在的问题是，在`app/management`目录下的应用页面中，需要引入`packages/components`目录里的组件`button.vue`。
 
 有人要问：那不是很简单吗？
 
-是的，直接`import Button from 'components/button.vue'`就行了。好了，好了，文章到此结束。。。
+是的，直接`import Button from 'components/button.vue'`就行了。
+
+好了，好了，文章到此结束。。。
 
 停停停！
 
@@ -66,17 +75,17 @@ echo "<template><WButton/></template>" > src/views/HomeView.vue
 
 ```
 
-## 回归正题
+## 回归正题，自动引入的实现过程
 
-笔者既要实现 button 组件的自动引入，同时还要实现编辑器对组件的属性的提示。
+笔者既要实现 button 组件的自动引入，同时还要实现编辑器vscode对组件的属性的提示。
 
 ### components包支持es module
 
-需要修改`packages/components/package.json`，添加`"type": "module",`
+需要修改[packages/components/package.json][package.json]，添加`"type": "module",`
 
 ### 实现自动导入，提供 resolver
 
-`auto-import.js`, 文件路径：`packages/components/auto-import.js`
+`auto-import.js`, 文件路径：[packages/components/auto-import.js][auto-import.js]
 
 ```js
 /**
@@ -104,7 +113,7 @@ export default resolver;
 
 注意：ts 项目需要添加`d.ts`文件，避免在 vite 中引入 resolver 报错：类型未定义
 
-`auto-import.d.ts`, 文件路径：`packages/components/auto-import.d.ts`
+`auto-import.d.ts`, 文件路径：[packages/components/auto-import.d.ts][auto-import.d.ts]
 
 ```ts
 export default function resolver(componentName: string):
@@ -119,7 +128,7 @@ export default function resolver(componentName: string):
 
 这里的声明是让组件在vscode中有会提示组件属性
 
-`types.d.ts`, 文件路径：`packages/components/types.d.ts`
+`types.d.ts`, 文件路径：[packages/components/types.d.ts][types.d.ts]
 
 ```ts
 // GlobalComponents for Volar
@@ -134,7 +143,7 @@ export {};
 
 ## 验证
 
-### 1. 安装vite自动导入插件`unplugin-vue-components`
+### 1. 安装vite自动导入插件[unplugin-vue-components][unplugin-vue-components]
 
 在`app/management`目录下执行
 
@@ -144,7 +153,7 @@ pnpm add unplugin-vue-components -D
 
 ### 2. vite添加自动导入配置
 
-修改文件`app/management/vite.config.ts`
+修改文件[app/management/vite.config.ts][vite.config.ts]
 
 ```ts
 import { fileURLToPath, URL } from 'node:url'
@@ -180,7 +189,7 @@ export default defineConfig(async () => {
 
 ### 3. 添加组件库ts类型
 
-修改文件`app/management/env.d.ts`
+修改文件[app/management/env.d.ts][env.d.ts]
 
 ```ts
 /// <reference types="vite/client" />
@@ -196,7 +205,7 @@ export default defineConfig(async () => {
 
 ### 测试
 
-此时我们把`button.vue`组件修改一下
+此时我们把[button.vue][button.vue]组件修改一下
 
 ```vue
 <template>
@@ -207,7 +216,7 @@ defineProps<{txt: string}>()
 </script>
 ```
 
-修改文件`app/management/src/views/HomeView.vue`
+修改文件[HomeView.vue][HomeView.vue]
 ```vue
 <script setup lang="ts"></script>
 <template><WButton txt="Hello Vue!"/></template>
@@ -218,10 +227,28 @@ defineProps<{txt: string}>()
 pnpm dev
 ```
 
-我们在`src/views/HomeView.vue`可以看到`<WButton/>`组件标红，鼠标移上去显示`msg`属性为`string`类型
+我们在[HomeView.vue][HomeView.vue]可以看到`<WButton/>`组件标红，鼠标移上去显示`msg`属性为`string`类型
 
 ## 文章代码仓库
 
 为了方便大家学习，已经将文章内容和代码全部提交到github
 
-[workspace-autoimport](https://github.com/weiquanju/workspace-autoimport)
+[workspace-autoimport][repo]
+
+感谢你的阅读！
+
+
+[package.json]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/package.json]
+[auto-import.js]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.js]
+[auto-import.d.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.d.ts]
+[auto-import.d.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.d.ts]
+[types.d.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/types.d.ts]
+[button.vue]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/button.vue]
+[vite.config.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/vite.config.ts]
+[env.d.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/env.d.ts]
+[HomeView.vue]:[https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/src/views/HomeView.vue]
+[pnpm-workspace]:[https://pnpm.io/zh/pnpm-workspace_yaml]
+[create-vue]:[https://github.com/vuejs/create-vue]
+[vite-config]:[https://vitejs.dev/config/]
+[unplugin-vue-components]:[https://github.com/unplugin/unplugin-vue-components]
+[repo]:[https://github.com/weiquanju/workspace-autoimport]
