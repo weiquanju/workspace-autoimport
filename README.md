@@ -1,5 +1,26 @@
 # Vue 组件库自动引入最佳实践
 
+## 摘要
+你是否好奇`ElementPlusResolver`如何实现自动导入的？今天来解密element-plus组件自动导入如何实现的。
+
+```ts
+// vite.config.ts
+import { defineConfig } from "vite";
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+
+export default defineConfig({
+  // ...
+  plugins: [
+    // ...
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
+  ],
+});
+```
+
 ## 技术要点
 
 - [pnpm workspace][pnpm-workspace]
@@ -75,6 +96,8 @@ echo "<template><WButton/></template>" > src/views/HomeView.vue
 
 ```
 
+下面开始演示[HomeView.vue][HomeView.vue]中`<WButton/>`不使用import语法实现自动按需导入components包里面的button组件。
+
 ## 回归正题，自动引入的实现过程
 
 笔者既要实现 button 组件的自动引入，同时还要实现编辑器vscode对组件的属性的提示。
@@ -104,7 +127,11 @@ function resolver(componentName) {
     .slice(1);
   if (map.has(name)) {
     const from = map.get(name);
-    if (from) return { from, name: "default"/*components/button.vue默认以default方式导出*/ };
+    if (from)
+      return {
+        from,
+        name: "default" /*components/button.vue默认以default方式导出*/,
+      };
   }
 }
 
@@ -134,7 +161,7 @@ export default function resolver(componentName: string):
 // GlobalComponents for Volar
 declare module "@vue/runtime-core" {
   export interface GlobalComponents {
-    WButton: typeof import("./button.vue")["default"];
+    WButton: (typeof import("./button.vue"))["default"];
   }
 }
 
@@ -156,35 +183,27 @@ pnpm add unplugin-vue-components -D
 修改文件[app/management/vite.config.ts][vite.config.ts]
 
 ```ts
-import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import Components from 'unplugin-vue-components/vite'
+import { defineConfig } from "vite";
+import Components from "unplugin-vue-components/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
-  const resolver = await import('components/auto-import').then((res) => res.default)
+  const resolver = await import("components/auto-import").then(
+    (res) => res.default
+  );
   return {
+    //...
     plugins: [
       Components({
-        // globs: ['src/components/**/*.{vue}'],
-        dts: './components.d.ts',
-        types: [],
+        dts: "./components.d.ts",
         resolvers: [resolver],
-        exclude: [/[\\/]node_modules[\\/]/]
+        exclude: [/[\\/]node_modules[\\/]/],
       }),
-      vue(),
-      vueJsx()
+      //...
     ],
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
-      }
-    }
-  }
-})
+    //...
+  };
+});
 ```
 
 ### 3. 添加组件库ts类型
@@ -203,7 +222,7 @@ export default defineConfig(async () => {
 /// <reference types="./components" />
 ```
 
-### 测试
+### 4. 测试
 
 此时我们把[button.vue][button.vue]组件修改一下
 
@@ -211,16 +230,18 @@ export default defineConfig(async () => {
 <template>
   {{ txt }}
 </template>
-<script setup lang='ts'>
-defineProps<{txt: string}>()
+<script setup lang="ts">
+defineProps<{ txt: string }>();
 </script>
 ```
 
 修改文件[HomeView.vue][HomeView.vue]
+
 ```vue
 <script setup lang="ts"></script>
-<template><WButton txt="Hello Vue!"/></template>
+<template><WButton txt="Hello Vue!" /></template>
 ```
+
 启动项目
 
 ```shell
@@ -236,7 +257,6 @@ pnpm dev
 [workspace-autoimport][repo]
 
 感谢你的阅读！
-
 
 [package.json]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/package.json]
 [auto-import.js]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.js]
