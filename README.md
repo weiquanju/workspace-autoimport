@@ -258,17 +258,17 @@ pnpm dev
 
 感谢你的阅读！
 
-[package.json]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/package.json]
-[auto-import.js]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.js]
-[auto-import.d.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.d.ts]
-[auto-import.d.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.d.ts]
-[types.d.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/types.d.ts]
-[button.vue]:[https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/button.vue]
-[vite.config.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/vite.config.ts]
-[env.d.ts]:[https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/env.d.ts]
-[HomeView.vue]:[https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/src/views/HomeView.vue]
-[pnpm-workspace]:[https://pnpm.io/zh/pnpm-workspace_yaml]
-[create-vue]:[https://github.com/vuejs/create-vue]
-[vite-config]:[https://vitejs.dev/config/]
-[unplugin-vue-components]:[https://github.com/unplugin/unplugin-vue-components]
-[repo]:[https://github.com/weiquanju/workspace-autoimport]
+[package.json]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/package.json
+[auto-import.js]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.js
+[auto-import.d.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.d.ts
+[auto-import.d.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.d.ts
+[types.d.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/types.d.ts
+[button.vue]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/button.vue
+[vite.config.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/vite.config.ts
+[env.d.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/env.d.ts
+[HomeView.vue]: https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/src/views/HomeView.vue
+[pnpm-workspace]: https://pnpm.io/zh/pnpm-workspace_yaml
+[create-vue]: https://github.com/vuejs/create-vue
+[vite-config]: https://vitejs.dev/config/
+[unplugin-vue-components]: https://github.com/unplugin/unplugin-vue-components
+[repo]: https://github.com/weiquanju/workspace-autoimport
