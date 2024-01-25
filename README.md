@@ -22,13 +22,6 @@ export default defineConfig({
 });
 ```
 
-## 技术要点
-
-- [pnpm workspace][pnpm-workspace]
-- [create vue][create-vue]
-- [vite config][vite-config]
-- [unplugin-vue-components][unplugin-vue-components]
-
 ## 背景
 
 笔者项目基于 monorepo 架构，以组织前端项目和内部公共组件库。monorepo 是使用的[pnpm workspace][pnpm-workspace]技术，极简配置即可使用，如下。
@@ -103,11 +96,11 @@ echo "<template><WButton/></template>" > src/views/HomeView.vue
 
 笔者既要实现 button 组件的自动引入，同时还要实现编辑器vscode对组件的属性的提示。
 
-### components包支持es module
+### 1. components包支持es module
 
 需要修改[packages/components/package.json][package.json]，添加`"type": "module",`
 
-### 实现自动导入，提供 resolver
+### 2. 实现自动导入，提供 resolver
 
 `auto-import.mjs`, 文件路径：[packages/components/auto-import.mjs][auto-import.mjs]
 
@@ -228,7 +221,18 @@ pnpm dev
 
 我们在[HomeView.vue][HomeView.vue]可以看到`<WButton/>`组件标红，鼠标移上去显示`msg`属性为`string`类型
 
-## 文章的代码仓库
+## 总结
+
+文章主要介绍了如何实现npm包组件库的resolver实现组件自动、按需加载，同时实现编辑器自动提示包内组件的属性。如果有些技术要点不清楚，建议根据自己需要进一步了解下面这些技术要点。
+
+### 技术要点
+
+- [pnpm workspace][pnpm-workspace]
+- [create vue][create-vue]
+- [vite config][vite-config]
+- [unplugin-vue-components][unplugin-vue-components]
+
+### 文章的代码仓库
 
 为了方便大家学习，已经将文章内容和代码全部提交到github
 
