@@ -1,7 +1,8 @@
 # Vue 组件库自动引入最佳实践
 
-## 摘要
-你是否好奇`ElementPlusResolver`如何实现自动导入的？今天来解密element-plus组件自动导入如何实现的。
+## 前言
+
+你是否好奇`ElementPlusResolver`如何实现自动导入的？今天来解密element-plus组件自动导入如何实现的。如果你是组件库作者，那一定不容错过。
 
 ```ts
 // vite.config.ts
@@ -56,7 +57,7 @@ packages:
 
 手动引入当然没有问题，问题是要自动引入啊，这样不是更爽吗，早点下班不香吗？
 
-## 使用工作区的 npm 包
+## 创建项目工作区，使用内部 npm 包
 
 monorepo 仓库根目录下执行命令，还原笔者的工作区
 
@@ -108,7 +109,7 @@ echo "<template><WButton/></template>" > src/views/HomeView.vue
 
 ### 实现自动导入，提供 resolver
 
-`auto-import.js`, 文件路径：[packages/components/auto-import.js][auto-import.js]
+`auto-import.mjs`, 文件路径：[packages/components/auto-import.mjs][auto-import.mjs]
 
 ```js
 /**
@@ -151,23 +152,6 @@ export default function resolver(componentName: string):
   | undefined;
 ```
 
-### 声明组件类型
-
-这里的声明是让组件在vscode中有会提示组件属性
-
-`types.d.ts`, 文件路径：[packages/components/types.d.ts][types.d.ts]
-
-```ts
-// GlobalComponents for Volar
-declare module "@vue/runtime-core" {
-  export interface GlobalComponents {
-    WButton: (typeof import("./button.vue"))["default"];
-  }
-}
-
-export {};
-```
-
 ## 验证
 
 ### 1. 安装vite自动导入插件[unplugin-vue-components][unplugin-vue-components]
@@ -185,42 +169,36 @@ pnpm add unplugin-vue-components -D
 ```ts
 import { defineConfig } from "vite";
 import Components from "unplugin-vue-components/vite";
+import ComponentsResolver from "components/auto-import";
 
 // https://vitejs.dev/config/
-export default defineConfig(async () => {
-  const resolver = await import("components/auto-import").then(
-    (res) => res.default
-  );
-  return {
+export default defineConfig({
+  //...
+  plugins: [
+    Components({
+      dts: "./components.d.ts",
+      types: [],
+      resolvers: [ComponentsResolver],
+      exclude: [/[\\/]node_modules[\\/]/],
+    }),
     //...
-    plugins: [
-      Components({
-        dts: "./components.d.ts",
-        resolvers: [resolver],
-        exclude: [/[\\/]node_modules[\\/]/],
-      }),
-      //...
-    ],
-    //...
-  };
+  ],
 });
 ```
 
-### 3. 添加组件库ts类型
+### 3. [**关键**]添加组件库ts类型 
 
 修改文件[app/management/env.d.ts][env.d.ts]
 
 ```ts
 /// <reference types="vite/client" />
 /**
- * 引用组件库components里的类型声明
- */
-/// <reference types="components/types" />
-/**
- * unplugin-vue-components生成的组件类型声明
+ * !**非常关键** unplugin-vue-components生成的组件类型声明
  */
 /// <reference types="./components" />
 ```
+
+这一步会让vscode获得组件参数的自动提示
 
 ### 4. 测试
 
@@ -250,7 +228,7 @@ pnpm dev
 
 我们在[HomeView.vue][HomeView.vue]可以看到`<WButton/>`组件标红，鼠标移上去显示`msg`属性为`string`类型
 
-## 文章代码仓库
+## 文章的代码仓库
 
 为了方便大家学习，已经将文章内容和代码全部提交到github
 
@@ -259,10 +237,8 @@ pnpm dev
 感谢你的阅读！
 
 [package.json]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/package.json
-[auto-import.js]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.js
+[auto-import.mjs]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.mjs
 [auto-import.d.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.d.ts
-[auto-import.d.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/auto-import.d.ts
-[types.d.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/types.d.ts
 [button.vue]: https://github.com/weiquanju/workspace-autoimport/blob/main/packages/components/button.vue
 [vite.config.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/vite.config.ts
 [env.d.ts]: https://github.com/weiquanju/workspace-autoimport/blob/main/app/management/env.d.ts
