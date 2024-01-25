@@ -2,7 +2,7 @@
 
 ## 前言
 
-你是否好奇`ElementPlusResolver`如何实现自动导入的？今天来解密element-plus组件自动导入如何实现的。如果你是组件库作者，那一定不容错过。
+你是否好奇`ElementPlusResolver`如何实现自动导入的？今天来解密element-plus组件自动导入如何实现的。如果你是组件库作者，那一定不容错过。其他同学也可以学习到monorepo架构、workspace、vue项目从0开始搭建、vue组件编辑器自动提示这些干货。
 
 ```ts
 // vite.config.ts
@@ -231,6 +231,8 @@ pnpm dev
 - [create vue][create-vue]
 - [vite config][vite-config]
 - [unplugin-vue-components][unplugin-vue-components]
+
+干货拿走，不谢！
 
 ### 文章的代码仓库
 
